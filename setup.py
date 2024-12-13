@@ -1,11 +1,11 @@
 import setuptools
 
-with open("README.md", "r") as fh:
+with open("README.md", "r", encoding="UTF-8") as fh:
     long_description = fh.read()
 
 setuptools.setup(
     name="google_patent_scraper",
-    version="1.0.8",
+    version="1.0.9",
     author="Ryan Stevens",
     author_email="ryan.louis.stevens@gmail.com",
     description="A package to scrape patents from 'https://patents.google.com/'",
