@@ -13,7 +13,7 @@ import csv
 import multiprocessing as mp
 
 # Google Scraper Class #
-from google_patent_scraper import scraper_class
+from google_patent_scraper import Scraper
 
 
 # ~~~~~~~~~~~~~~~~~~~ #
@@ -36,7 +36,7 @@ def single_process_scraper(patent, path_to_data_file, data_column_order):
 
     """
     # ~ Initialize scraper class ~ #
-    scraper = scraper_class()
+    scraper = Scraper()
 
     # ~ Scrape single patent ~ #
     err, soup, url = scraper.request_single_patent(patent)
