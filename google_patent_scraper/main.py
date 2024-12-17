@@ -1,8 +1,8 @@
 # Scrape #
-import pandas as pd
+import json
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
-import json
+import pandas as pd
 from bs4 import BeautifulSoup
 # json #
 # errors #
@@ -367,20 +367,23 @@ class Scraper:
         #  Return data as a Patent Object
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
         patent_obj = Patent()
-        patent_obj.title = title_text
-        patent_obj.inventor_name = json.dumps(inventor_name)
-        patent_obj.assignee_name_orig = json.dumps(assignee_name_orig)
-        patent_obj.assignee_name_current = json.dumps(assignee_name_current)
-        patent_obj.pub_date = pub_date
-        patent_obj.priority_date = priority_date
-        patent_obj.grant_date = grant_date
-        patent_obj.filing_date = filing_date
-        patent_obj.expiration_date = expiration_date
-        patent_obj.forward_cite_no_family = json.dumps(forward_cites_no_family)
-        patent_obj.forward_cite_yes_family = json.dumps(forward_cites_yes_family)
-        patent_obj.backward_cite_no_family = json.dumps(backward_cites_no_family)
-        patent_obj.backward_cite_yes_family = json.dumps(backward_cites_yes_family)
-        patent_obj.abstract_text = abstract_text
+        for attr, value in {
+            'title': title_text,
+            'inventor_name': json.dumps(inventor_name),
+            'assignee_name_orig': json.dumps(assignee_name_orig),
+            'assignee_name_current': json.dumps(assignee_name_current),
+            'pub_date': pub_date,
+            'priority_date': priority_date,
+            'grant_date': grant_date,
+            'filing_date': filing_date,
+            'expiration_date': expiration_date,
+            'forward_cite_no_family': json.dumps(forward_cites_no_family),
+            'forward_cite_yes_family': json.dumps(forward_cites_yes_family),
+            'backward_cite_no_family': json.dumps(backward_cites_no_family),
+            'backward_cite_yes_family': json.dumps(backward_cites_yes_family),
+            'abstract_text': abstract_text
+        }.items():
+            setattr(patent_obj, attr, value)
         return patent_obj
 
     def get_scraped_data(self, soup, patent, url):

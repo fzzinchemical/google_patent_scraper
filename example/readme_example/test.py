@@ -1,5 +1,5 @@
 import pandas as pd
-from google_patent_scraper.main import Scraper, Patent  # Assuming Scraper is defined in main.py
+from google_patent_scraper.main import Scraper  # Assuming Scraper is defined in main.py
 
 # Create an instance of the Scraper class
 scraper = Scraper()

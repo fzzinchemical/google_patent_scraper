@@ -1,7 +1,8 @@
 # Scrape #
+import json
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
-import json
+import pandas as pd
 from bs4 import BeautifulSoup
 # json #
 # errors #
@@ -12,7 +13,92 @@ from .errors import *
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
 
 #classname does not conform to PascalCase naming Style
-class scraper_class:
+
+class Patent:
+    """
+    A class to represent a patent.
+
+    Attributes
+    ----------
+    title : str
+        The title of the patent.
+    inventor_name : str
+        The name of the inventor.
+    assignee_name_orig : str
+        The original assignee name.
+    assignee_name_current : str
+        The current assignee name.
+    pub_date : str
+        The publication date of the patent.
+    priority_date : str
+        The priority date of the patent.
+    grant_date : str
+        The grant date of the patent.
+    filing_date : str
+        The filing date of the patent.
+    expiration_date : str
+        The expiration date of the patent.
+    forward_cite_no_family : str
+        The number of forward citations not in the same family.
+    forward_cite_yes_family : str
+        The number of forward citations in the same family.
+    backward_cite_no_family : str
+        The number of backward citations not in the same family.
+    backward_cite_yes_family : str
+        The number of backward citations in the same family.
+    abstract_text : str
+        The abstract text of the patent.
+    url : str
+        The URL of the patent.
+    patent : str
+        The patent number or identifier.
+    """
+    def __init__(self):
+        self.title = ''
+        self.inventor_name = ''
+        self.assignee_name_orig = ''
+        self.assignee_name_current = ''
+        self.pub_date = ''
+        self.priority_date = ''
+        self.grant_date = ''
+        self.filing_date = ''
+        self.expiration_date = ''
+        self.forward_cite_no_family = ''
+        self.forward_cite_yes_family = ''
+        self.backward_cite_no_family = ''
+        self.backward_cite_yes_family = ''
+        self.abstract_text = ''
+        self.url = ''
+        self.patent = ''
+
+    def to_dataframe(self):
+        """
+        Converts the Patent object to a pandas DataFrame.
+
+        Returns:
+            pd.DataFrame: A DataFrame containing the patent data.
+        """
+        data = {
+            'title': [self.title],
+            'inventor_name': [self.inventor_name],
+            'assignee_name_orig': [self.assignee_name_orig],
+            'assignee_name_current': [self.assignee_name_current],
+            'pub_date': [self.pub_date],
+            'priority_date': [self.priority_date],
+            'grant_date': [self.grant_date],
+            'filing_date': [self.filing_date],
+            'expiration_date': [self.expiration_date],
+            'forward_cite_no_family': [self.forward_cite_no_family],
+            'forward_cite_yes_family': [self.forward_cite_yes_family],
+            'backward_cite_no_family': [self.backward_cite_no_family],
+            'backward_cite_yes_family': [self.backward_cite_yes_family],
+            'abstract_text': [self.abstract_text],
+            'url': [self.url],
+            'patent': [self.patent]
+        }
+        return pd.DataFrame(data)
+
+class Scraper:
     """
     Google scraper class used to scrape data from 'https://patents.google.com/'
 
@@ -20,7 +106,7 @@ class scraper_class:
 
         (1) Add list of patents to class and scrape all patents at once
 
-        scraper=scraper_class() #<- Initialize class
+        scraper=Scraper() #<- Initialize class
 
         # ~ Add patents to list ~ #
         scraper.add_patents('US2668287A')
@@ -37,7 +123,7 @@ class scraper_class:
 
         (2) Scrape each patent individually
 
-        scraper=scraper_class() #<- Initialize class
+        scraper=Scraper() #<- Initialize class
 
         # ~~ Scrape patents individually ~~ #
         patent_1 = 'US2668287A'
@@ -60,7 +146,7 @@ class scraper_class:
     def __init__(self, return_abstract=False):
         self.list_of_patents = []
         self.scrape_status = {}
-        self.parsed_patents = {}
+        self.parsed_patents = []
         self.return_abstract = return_abstract
 
     def add_patents(self, patent):
@@ -197,7 +283,8 @@ class scraper_class:
         )} for x in soup.find_all('dd', itemprop='assigneeCurrent')] or []
 
         # Publication Date #
-        pub_date = soup.find('dd', itemprop='publicationDate').get_text() or ''
+        pub_date = (soup.find('dd', itemprop='publicationDate')
+                    .get_text() if soup.find('dd', itemprop='publicationDate') else '')
         # Application Number #
 
         # unused variable, to be implemented if needed
@@ -205,7 +292,8 @@ class scraper_class:
         #     'dd', itemprop="applicationNumber").get_text() or ''
 
         # Filing Date #
-        filing_date = soup.find('dd', itemprop='filingDate').get_text() or ''
+        filing_date = (soup.find('dd', itemprop='filingDate')
+                       .get_text() if soup.find('dd', itemprop='filingDate') else '')
 
         # Loop through all events #
         list_of_application_events = soup.find_all('dd', itemprop='events')
@@ -276,22 +364,27 @@ class scraper_class:
                 abstract_text = abstract['content']
 
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-        #  Return data as a dictionary
+        #  Return data as a Patent Object
         # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
-        return ({'title': title_text,
-                'inventor_name': json.dumps(inventor_name),
-                 'assignee_name_orig': json.dumps(assignee_name_orig),
-                 'assignee_name_current': json.dumps(assignee_name_current),
-                 'pub_date': pub_date,
-                 'priority_date': priority_date,
-                 'grant_date': grant_date,
-                 'filing_date': filing_date,
-                 'expiration_date': expiration_date,
-                 'forward_cite_no_family': json.dumps(forward_cites_no_family),
-                 'forward_cite_yes_family': json.dumps(forward_cites_yes_family),
-                 'backward_cite_no_family': json.dumps(backward_cites_no_family),
-                 'backward_cite_yes_family': json.dumps(backward_cites_yes_family),
-                 'abstract_text': abstract_text})
+        patent_obj = Patent()
+        for attr, value in {
+            'title': title_text,
+            'inventor_name': json.dumps(inventor_name),
+            'assignee_name_orig': json.dumps(assignee_name_orig),
+            'assignee_name_current': json.dumps(assignee_name_current),
+            'pub_date': pub_date,
+            'priority_date': priority_date,
+            'grant_date': grant_date,
+            'filing_date': filing_date,
+            'expiration_date': expiration_date,
+            'forward_cite_no_family': json.dumps(forward_cites_no_family),
+            'forward_cite_yes_family': json.dumps(forward_cites_yes_family),
+            'backward_cite_no_family': json.dumps(backward_cites_no_family),
+            'backward_cite_yes_family': json.dumps(backward_cites_yes_family),
+            'abstract_text': abstract_text
+        }.items():
+            setattr(patent_obj, attr, value)
+        return patent_obj
 
     def get_scraped_data(self, soup, patent, url):
         """
@@ -312,8 +405,8 @@ class scraper_class:
         # ~~ Parse individual patent ~~ #
         parsing_individ_patent = self.process_patent_html(soup)
         # ~~ Add url + patent to dictionary ~~ #
-        parsing_individ_patent['url'] = url
-        parsing_individ_patent['patent'] = patent
+        parsing_individ_patent.url = url
+        parsing_individ_patent.patent = patent
         # ~~ Return patent info ~~ #
         return parsing_individ_patent
 
@@ -335,7 +428,7 @@ class scraper_class:
                 # ~ Add scrape status variable ~ #
                 self.add_scrape_status(patent, error_status)
                 if error_status == 'Success':
-                    self.parsed_patents[patent] = self.get_scraped_data(
-                        soup, patent, url)
+                    # self.parsed_patents[patent] = self.get_scraped_data(soup, patent, url)
+                    self.parsed_patents.append(self.get_scraped_data(soup, patent, url))
                 else:
-                    self.parsed_patents[patent] = {}
+                    self.parsed_patents[patent] = []

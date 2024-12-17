@@ -1,3 +1,3 @@
-from .main import scraper_class
+from .main import Scraper
 
 name='google_patents_scraper'

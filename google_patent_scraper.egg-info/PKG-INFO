@@ -1,6 +1,6 @@
 Metadata-Version: 2.1
 Name: google_patent_scraper
-Version: 1.0.9
+Version: 2.0.0
 Summary: A package to scrape patents from 'https://patents.google.com/'
 Home-page: https://github.com/rls542/patent_scraper/
 Author: Ryan Stevens
