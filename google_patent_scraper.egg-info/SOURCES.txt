@@ -1,6 +1,17 @@
+.gitignore
+CODE_OF_CONDUCT.md
 LICENSE
 README.md
+requirements.txt
 setup.py
+example/__pycache__/errors.cpython-37.pyc
+example/__pycache__/functions.cpython-37.pyc
+example/__pycache__/main.cpython-37.pyc
+example/multiprocess_example/functions.py
+example/multiprocess_example/multiprocess_scraper.py
+example/multiprocess_example/data/edison_patents.csv
+example/readme_example/readme.py
+example/readme_example/test.py
 google_patent_scraper/__init__.py
 google_patent_scraper/errors.py
 google_patent_scraper/main.py
@@ -8,3 +19,9 @@ google_patent_scraper.egg-info/PKG-INFO
 google_patent_scraper.egg-info/SOURCES.txt
 google_patent_scraper.egg-info/dependency_links.txt
 google_patent_scraper.egg-info/top_level.txt
+google_patent_scraper/__pycache__/__init__.cpython-312.pyc
+google_patent_scraper/__pycache__/__init__.cpython-37.pyc
+google_patent_scraper/__pycache__/errors.cpython-312.pyc
+google_patent_scraper/__pycache__/errors.cpython-37.pyc
+google_patent_scraper/__pycache__/main.cpython-312.pyc
+google_patent_scraper/__pycache__/main.cpython-37.pyc
